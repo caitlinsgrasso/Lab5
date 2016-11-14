@@ -1,6 +1,8 @@
 package poker.app.view;
 
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.animation.FadeTransition;
@@ -18,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 import poker.app.MainApp;
 import pokerBase.Action;
+import pokerBase.Player;
 import pokerBase.Table;
 import pokerEnums.eAction;
 import pokerEnums.ePlayerPosition;
@@ -137,6 +140,87 @@ public class PokerTableController implements Initializable {
 	}
 
 	public void Handle_TableState(Table HubPokerTable) {
+		
+		//No one is at the table
+		lblPos1Name.setText("");
+		lblPos2Name.setText("");
+		lblPos3Name.setText("");
+		lblPos4Name.setText("");
+		
+		//All buttons are visible to all players
+		btnPos1SitLeave.setVisible(true);
+		btnPos2SitLeave.setVisible(true);
+		btnPos3SitLeave.setVisible(true);
+		btnPos4SitLeave.setVisible(true);
+		
+		//If a SitLeave button is pushed change the text to "leave"
+		btnPos1SitLeave.setText(btnPos1SitLeave.isSelected() ? "Leave" : "Sit");
+		btnPos2SitLeave.setText(btnPos2SitLeave.isSelected() ? "Leave" : "Sit");
+		btnPos3SitLeave.setText(btnPos3SitLeave.isSelected() ? "Leave" : "Sit");
+		btnPos4SitLeave.setText(btnPos4SitLeave.isSelected() ? "Leave" : "Sit");
+		
+		//If there are less then 0 players in the HashMap disable the StartGame button
+		btnStartGame.setDisable(HubPokerTable.getHashPlayers().size() < 0 ? true : false);
+		
+		//Iterate through players in the Players HashMap
+		Iterator iterator = HubPokerTable.getHashPlayers().entrySet().iterator();
+		
+		while (iterator.hasNext()){
+			//Get a player from the HashMap using the key
+			Map.Entry keyValue = (Map.Entry) iterator.next();
+			Player player = (Player) keyValue.getValue();
+			
+			//Get the player's position
+			switch (player.getiPlayerPosition()){
+			
+			//If position 1, make SitLeave button at position one visible and all the others not visible
+			case 1:
+				if (player.getPlayerID()==mainApp.getPlayer().getPlayerID()){
+					btnPos1SitLeave.setVisible(true);
+					btnPos2SitLeave.setVisible(false);
+					btnPos3SitLeave.setVisible(false);
+					btnPos4SitLeave.setVisible(false);
+				} else {
+					btnPos1SitLeave.setVisible(false);
+				}
+				lblPos1Name.setText(player.getPlayerName().toString());
+				break;
+			case 2:
+				if (player.getPlayerID()==mainApp.getPlayer().getPlayerID()){
+					btnPos1SitLeave.setVisible(false);
+					btnPos2SitLeave.setVisible(true);
+					btnPos3SitLeave.setVisible(false);
+					btnPos4SitLeave.setVisible(false);
+				} else {
+					btnPos2SitLeave.setVisible(false);
+				}
+				lblPos2Name.setText(player.getPlayerName().toString());
+				break;
+			case 3:
+				if (player.getPlayerID()==mainApp.getPlayer().getPlayerID()){
+					btnPos1SitLeave.setVisible(false);
+					btnPos2SitLeave.setVisible(false);
+					btnPos3SitLeave.setVisible(true);
+					btnPos4SitLeave.setVisible(false);
+				} else {
+					btnPos3SitLeave.setVisible(false);
+				}
+				lblPos3Name.setText(player.getPlayerName().toString());
+				break;
+			case 4:
+				if (player.getPlayerID()==mainApp.getPlayer().getPlayerID()){
+					btnPos1SitLeave.setVisible(false);
+					btnPos2SitLeave.setVisible(false);
+					btnPos3SitLeave.setVisible(false);
+					btnPos4SitLeave.setVisible(true);
+				} else {
+					btnPos4SitLeave.setVisible(false);
+				}
+				lblPos4Name.setText(player.getPlayerName().toString());
+				break;
+				}
+		
+			}
 
 		//TODO: If this message is called, that means there
 		//		was a change to the state of the Table (player
